@@ -1,4 +1,3 @@
-```markdown
 # 🏏 IPL Match Outcome Predictor
 
 An advanced AI-based system for predicting IPL match outcomes, final scores, key player performance, and explaining predictions using a hybrid of machine learning and a local large language model (LLM) via Ollama.
@@ -7,22 +6,21 @@ An advanced AI-based system for predicting IPL match outcomes, final scores, key
 
 ## 🔧 Tech Stack
 
-| Component        | Technology               |
-|------------------|---------------------------|
-| ML Models        | Scikit-learn, XGBoost, PyTorch |
-| Backend APIs     | FastAPI & Django          |
-| LLM Integration  | Ollama (LLaMA2, Mistral etc.) |
+| Component        | Technology                         |
+|------------------|-------------------------------------|
+| ML Models        | Scikit-learn, XGBoost, PyTorch      |
+| Backend APIs     | FastAPI, Django                     |
+| LLM Integration  | Ollama (LLaMA2, Mistral, etc.)      |
 | Data Pipelines   | Pandas, NumPy, Scikit-learn Pipelines |
-| Visualization    | Matplotlib, Plotly, Django Admin |
-| Live API Docs    | Swagger (FastAPI built-in) |
-| Deployment (opt) | Docker, Gunicorn, Nginx |
+| Visualization    | Matplotlib, Plotly, Django Admin    |
+| Live API Docs    | Swagger (FastAPI built-in)          |
+| Deployment (opt) | Docker, Gunicorn, Nginx             |
 
 ---
 
 ## 📁 Project Structure
 
 ```
-
 ipl-predictor/
 ├── backend-django/         # Django admin + visualization dashboard
 │   ├── predictor/
@@ -31,17 +29,16 @@ ipl-predictor/
 │   └── main.py
 ├── ml-models/              # ML model training scripts & serialized models
 │   ├── train.py
-│   ├── model\_pipeline.pkl
+│   ├── model_pipeline.pkl
 │   └── ...
 ├── ollama-llm/             # Scripts for prompt generation + LLM integration
-│   └── llm\_explainer.py
+│   └── llm_explainer.py
 ├── data/                   # IPL datasets (historical match & player data)
 │   └── matches.csv
 ├── notebooks/              # Exploratory Data Analysis & prototypes
 │   └── EDA.ipynb
 ├── README.md
 └── requirements.txt
-
 ```
 
 ---
@@ -49,18 +46,21 @@ ipl-predictor/
 ## 🚀 Features
 
 ### 🧠 ML Predictions
-- Predict Match Winner
-- Predict Final Scores (Winner & Loser)
-- Predict Key Player Stats: Runs, Wickets, Economy Rate
-- Track Trends from Last 3–5 Matches
+
+- Predict match winner
+- Predict final scores (Winner & Loser)
+- Predict key player stats: Runs, Wickets, Economy Rate
+- Track trends from last 3–5 matches
 
 ### 💬 LLM Reasoning (Ollama)
+
 - Local LLM (LLaMA2/Mistral) for:
   - Explaining predictions
   - Highlighting key influencing factors
   - Generating narrative summaries
 
 ### 📈 Real-Time Prediction System
+
 - Accept live match data updates
 - Output point predictions and confidence intervals
 - Visual dashboards for trends
@@ -70,10 +70,11 @@ ipl-predictor/
 ## 🛠️ Installation & Setup
 
 ### 1. Clone the Repository
+
 ```bash
 git clone https://github.com/your-username/ipl-predictor.git
 cd ipl-predictor
-````
+```
 
 ### 2. Install Python Requirements
 
@@ -104,14 +105,14 @@ Install [Ollama](https://ollama.com/) and run:
 ollama run llama2
 ```
 
-Make sure your FastAPI or Django backend communicates with Ollama via HTTP (default: `http://localhost:11434`).
+> Ensure your FastAPI or Django backend communicates with Ollama via HTTP (default: `http://localhost:11434`).
 
 ---
 
 ## 🔗 API Endpoints (FastAPI)
 
 | Method | Endpoint                | Description                      |
-| ------ | ----------------------- | -------------------------------- |
+|--------|-------------------------|----------------------------------|
 | GET    | `/`                     | Welcome Message                  |
 | POST   | `/predict_winner`       | Predict match winner             |
 | POST   | `/predict_scores`       | Predict winner/loser final score |
@@ -146,7 +147,7 @@ Make sure your FastAPI or Django backend communicates with Ollama via HTTP (defa
 
 ### 1. Prepare Datasets
 
-Place your CSV files under `/data`.
+Place your CSV files under the `/data` directory.
 
 ### 2. Train the Ensemble Model
 
@@ -155,7 +156,7 @@ cd ml-models
 python train.py
 ```
 
-Trained models are saved as `.pkl` files and loaded by FastAPI or Django.
+> Trained models are saved as `.pkl` files and loaded by FastAPI or Django.
 
 ---
 
@@ -164,20 +165,20 @@ Trained models are saved as `.pkl` files and loaded by FastAPI or Django.
 In `ollama-llm/llm_explainer.py`, we generate prompts like:
 
 ```
-"Based on recent match stats, CSK has won 3 out of 5 matches. How likely are they to win against MI at Wankhede?"
+Based on recent match stats, CSK has won 3 out of 5 matches. How likely are they to win against MI at Wankhede?
 ```
 
-The LLM responds with natural language explanations based on statistical cues.
+> The LLM responds with natural language explanations based on statistical cues.
 
 ---
 
 ## 📊 Dashboard (Django)
 
-Features:
+Features include:
 
-* View recent predictions
-* Explore visual graphs for player trends
-* Admin interface to upload datasets and manage models
+- View recent predictions
+- Explore visual graphs for player trends
+- Admin interface to upload datasets and manage models
 
 ---
 
@@ -185,15 +186,15 @@ Features:
 
 To retrain periodically:
 
-* Use a `cron` job or script (`ml-models/train.py`)
-* Add new match data to `/data/`
-* Automatically refresh models via CLI or API call
+- Use a `cron` job or script (`ml-models/train.py`)
+- Add new match data to `/data/`
+- Automatically refresh models via CLI or API call
 
 ---
 
 ## 📜 License
 
-MIT License – free to use, modify, and distribute.
+**MIT License** – Free to use, modify, and distribute.
 
 ---
 
@@ -205,9 +206,6 @@ Contributions are welcome! Please open issues or submit pull requests for improv
 
 ## 👨‍💻 Author
 
-**ANUBHOB DEY**
-AI Engineer & Backend Developer
+**ANUBHOB DEY**  
+AI Engineer & Backend Developer  
 [Portfolio](https://your-portfolio.com) • [LinkedIn](https://linkedin.com/in/your-profile) • [GitHub](https://github.com/your-username)
-
-```
-
