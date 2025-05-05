@@ -1,0 +1,35 @@
+# --- Core Frameworks ---
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+django==5.0.6
+
+# --- Machine Learning & Data ---
+scikit-learn==1.4.2
+xgboost==2.0.3
+pandas==2.2.2
+numpy==1.26.4
+matplotlib==3.8.4
+seaborn==0.13.2
+
+# --- Deep Learning (Optional Neural Network models) ---
+torch==2.2.2
+torchvision==0.17.2
+
+# --- LLM & Prompt Engineering ---
+openai==1.30.1        # if using OpenAI APIs
+requests==2.31.0       # for communicating with Ollama's local API
+
+# --- Model Persistence ---
+joblib==1.4.2
+
+# --- Dev Tools ---
+ipykernel==6.29.4
+jupyter==1.0.0
+python-dotenv==1.0.1
+
+# --- Optional: Async + DB Support ---
+httpx==0.27.0
+sqlalchemy==2.0.30
+
+# --- Visualization ---
+plotly==5.21.0
