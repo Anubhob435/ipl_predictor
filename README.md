@@ -42,7 +42,7 @@ ipl-predictor/
 ├── README.md
 └── requirements.txt
 
-````
+```
 
 ---
 
