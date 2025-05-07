@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL Match Predictor</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af',
+                        secondary: '#4f46e5',
+                        success: '#16a34a',
+                        danger: '#dc2626',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer components {
+            .form-input {
+                @apply w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+            }
+            .form-select {
+                @apply w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+            }
+            .form-label {
+                @apply block mb-2 text-sm font-medium text-gray-700;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-700 to-indigo-800 py-12 shadow-lg">
+        <div class="container mx-auto px-4">
+            <h1 class="text-4xl font-bold text-white text-center">IPL Match Predictor</h1>
+            <p class="text-xl text-white text-center mt-2 opacity-90">Enter match details to predict the winner</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="w-full">
+            <!-- Form Section -->
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <form method="post">
+                    {% csrf_token %}
+                    {% load form_filters %}
+                    
+                    <!-- Match Details -->
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200">Match Details</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label for="{{ form.venue.id_for_label }}" class="form-label">{{ form.venue.label }}</label>
+                                {{ form.venue|tailwind_class }}
+                            </div>
+                            <div>
+                                <label for="{{ form.team1.id_for_label }}" class="form-label">{{ form.team1.label }}</label>
+                                {{ form.team1|tailwind_class }}
+                            </div>
+                            <div>
+                                <label for="{{ form.team2.id_for_label }}" class="form-label">{{ form.team2.label }}</label>
+                                {{ form.team2|tailwind_class }}
+                            </div>
+                            <div>
+                                <label for="{{ form.toss_winner.id_for_label }}" class="form-label">{{ form.toss_winner.label }}</label>
+                                {{ form.toss_winner|tailwind_class }}
+                            </div>
+                            <div>
+                                <label for="{{ form.toss_decision.id_for_label }}" class="form-label">{{ form.toss_decision.label }}</label>
+                                {{ form.toss_decision|tailwind_class }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Team 1 Stats -->
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Team 1 Stats</h2>
+                        <p class="text-gray-600 mb-4 text-sm">Enter performance stats from the last 5 matches</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div>
+                                <label for="{{ form.team1_win_rate_last_5.id_for_label }}" class="form-label">{{ form.team1_win_rate_last_5.label }}</label>
+                                {{ form.team1_win_rate_last_5|tailwind_class }}
+                            </div>
+                            <div>
+                                <label for="{{ form.team1_avg_margin_last_5.id_for_label }}" class="form-label">{{ form.team1_avg_margin_last_5.label }}</label>
+                                {{ form.team1_avg_margin_last_5|tailwind_class }}
+                            </div>
+                            <div>
+                                <label for="{{ form.team1_avg_runs_scored_last_5.id_for_label }}" class="form-label">{{ form.team1_avg_runs_scored_last_5.label }}</label>
+                                {{ form.team1_avg_runs_scored_last_5|tailwind_class }}
+                            </div>
+                            <div>
+                                <label for="{{ form.team1_avg_wickets_taken_last_5.id_for_label }}" class="form-label">{{ form.team1_avg_wickets_taken_last_5.label }}</label>
+                                {{ form.team1_avg_wickets_taken_last_5|tailwind_class }}
+                            </div>
+                            <div>
+                                <label for="{{ form.team1_avg_economy_rate_last_5.id_for_label }}" class="form-label">{{ form.team1_avg_economy_rate_last_5.label }}</label>
+                                {{ form.team1_avg_economy_rate_last_5|tailwind_class }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Team 2 Stats -->
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Team 2 Stats</h2>
+                        <p class="text-gray-600 mb-4 text-sm">Enter performance stats from the last 5 matches</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div>
+                                <label for="{{ form.team2_win_rate_last_5.id_for_label }}" class="form-label">{{ form.team2_win_rate_last_5.label }}</label>
+                                {{ form.team2_win_rate_last_5|tailwind_class }}
+                            </div>
+                            <div>
+                                <label for="{{ form.team2_avg_margin_last_5.id_for_label }}" class="form-label">{{ form.team2_avg_margin_last_5.label }}</label>
+                                {{ form.team2_avg_margin_last_5|tailwind_class }}
+                            </div>
+                            <div>
+                                <label for="{{ form.team2_avg_runs_scored_last_5.id_for_label }}" class="form-label">{{ form.team2_avg_runs_scored_last_5.label }}</label>
+                                {{ form.team2_avg_runs_scored_last_5|tailwind_class }}
+                            </div>
+                            <div>
+                                <label for="{{ form.team2_avg_wickets_taken_last_5.id_for_label }}" class="form-label">{{ form.team2_avg_wickets_taken_last_5.label }}</label>
+                                {{ form.team2_avg_wickets_taken_last_5|tailwind_class }}
+                            </div>
+                            <div>
+                                <label for="{{ form.team2_avg_economy_rate_last_5.id_for_label }}" class="form-label">{{ form.team2_avg_economy_rate_last_5.label }}</label>
+                                {{ form.team2_avg_economy_rate_last_5|tailwind_class }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="mt-8">
+                        <button type="submit" class="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-medium rounded-lg shadow-md hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all">
+                            Predict Winner
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Prediction Result Section -->
+            {% if prediction_result %}
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h2 class="text-2xl font-bold text-primary mb-4">Match Prediction</h2>
+                
+                {% if prediction_result.error %}
+                    <p class="text-xl font-semibold text-danger">Error: {{ prediction_result.error }}</p>
+                    <p class="text-gray-700 mt-2">{{ prediction_result.details }}</p>
+                    {% if prediction_result.message %}
+                    <p class="text-gray-700">{{ prediction_result.message }}</p>
+                    {% endif %}
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mt-4">
+                        <p class="text-yellow-700">Please ensure the FastAPI service is running on port 8000.</p>
+                        <p class="text-yellow-700 mt-1">You can start it by running:</p>
+                        <code class="block bg-gray-100 p-2 rounded mt-2 text-sm">cd c:\Users\anubh\OneDrive\Desktop\ipl_predictor && python fast_api.py</code>
+                        <p class="text-yellow-700 mt-3">Or use the run_servers.py script to start both servers:</p>
+                        <code class="block bg-gray-100 p-2 rounded mt-2 text-sm">cd c:\Users\anubh\OneDrive\Desktop\ipl_predictor && python run_servers.py</code>
+                    </div>
+                {% else %}
+                    <p class="text-2xl font-bold mb-2">
+                        The predicted winner is <span class="text-success">{{ prediction_result.winner }}</span>
+                    </p>
+                    <p class="text-lg text-gray-700 mb-4">Win probability: <span class="font-medium">{{ prediction_result.probability }}%</span></p>
+                    
+                    <!-- Prediction Bar Chart -->
+                    <div class="w-full bg-gray-200 rounded-full h-6 mb-6">
+                        {% if prediction_result.winner == prediction_result.team1 %}
+                            <div class="flex rounded-full overflow-hidden h-full">
+                                <div class="bg-success text-xs flex items-center justify-center text-white h-full text-center p-1" style="width: {{ prediction_result.probability }}%">
+                                    {{ prediction_result.team1 }} ({{ prediction_result.probability }}%)
+                                </div>
+                                <div class="bg-danger text-xs flex items-center justify-center text-white h-full text-center p-1" style="width: {{ 100|add:'-'|add:prediction_result.probability }}%">
+                                    {{ prediction_result.team2 }} ({{ 100|add:'-'|add:prediction_result.probability }}%)
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="flex rounded-full overflow-hidden h-full">
+                                <div class="bg-danger text-xs flex items-center justify-center text-white h-full text-center p-1" style="width: {{ 100|add:'-'|add:prediction_result.probability }}%">
+                                    {{ prediction_result.team1 }} ({{ 100|add:'-'|add:prediction_result.probability }}%)
+                                </div>
+                                <div class="bg-success text-xs flex items-center justify-center text-white h-full text-center p-1" style="width: {{ prediction_result.probability }}%">
+                                    {{ prediction_result.team2 }} ({{ prediction_result.probability }}%)
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Debug Information (Collapsible) -->
+                    <div class="mt-6">
+                        <button id="debugBtn" class="text-sm px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
+                            Show Debug Info
+                        </button>
+                        <div id="debugInfo" class="hidden mt-3">
+                            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 font-mono text-sm">
+                                <h5 class="font-semibold text-gray-700 mb-2">Raw API Response:</h5>
+                                <pre class="whitespace-pre-wrap">{{ prediction_result.raw_response }}</pre>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- JavaScript for Collapsible Debug Info -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const debugBtn = document.getElementById('debugBtn');
+            const debugInfo = document.getElementById('debugInfo');
+            
+            if (debugBtn && debugInfo) {
+                debugBtn.addEventListener('click', function() {
+                    if (debugInfo.classList.contains('hidden')) {
+                        debugInfo.classList.remove('hidden');
+                        debugBtn.textContent = 'Hide Debug Info';
+                    } else {
+                        debugInfo.classList.add('hidden');
+                        debugBtn.textContent = 'Show Debug Info';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
