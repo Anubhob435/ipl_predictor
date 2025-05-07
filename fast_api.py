@@ -2,6 +2,7 @@ import os
 import joblib
 import pandas as pd
 from fastapi import FastAPI, HTTPException # Import HTTPException
+from fastapi.middleware.cors import CORSMiddleware  # Import CORS middleware
 from pydantic import BaseModel
 import uvicorn
 import numpy as np # Import numpy
@@ -56,23 +57,32 @@ except Exception as e:
 # --- API Definition ---
 app = FastAPI(title="IPL Match Winner Predictor API")
 
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://127.0.0.1:8080", "http://localhost:8080"],  # Django server URLs
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allow all headers
+)
+
 # Import the Gemini analysis function
 import sys
 import os
-sys.path.append(os.path.join(ROOT_DIR, 'llm_vizualization'))
+
+# Make sure llm_vizualization is in the path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+_gemini_import_error_details = "" # To store specific error details
 try:
     from llm_vizualization.model_gemini import analyze_match_prediction
-except ImportError:
-    # Fallback if the import fails
-    try:
-        from model_gemini import analyze_match_prediction
-        print("Successfully imported analyze_match_prediction from model_gemini")
-    except ImportError:
-        print("Warning: Could not import analyze_match_prediction function. AI Analysis feature will not work.")
-        
-        # Define a dummy function as fallback
-        def analyze_match_prediction(match_data, prediction_result):
-            return "Error: Gemini analysis function could not be loaded. Please check your setup and ensure the API key is configured."
+    print("Successfully imported analyze_match_prediction from llm_vizualization.model_gemini")
+except Exception as e:
+    #_gemini_import_error_details = f"{type(e).__name__}: {str(e)}"
+    print(f"Error importing 'analyze_match_prediction' from 'llm_vizualization.model_gemini':")
+    # Define a dummy function as fallback, capturing the error detail
+    #def analyze_match_prediction(match_data, prediction_result):
+        #return f"Error: Gemini analysis function could not be loaded. Import failed with: {_gemini_import_error_details}. Please check your setup, ensure GEMINI_API_KEY is in .env, and all dependencies are installed."
 
 # Define input data model using Pydantic
 # Match the features used in X_classifier during training
@@ -82,8 +92,7 @@ class MatchInput(BaseModel):
     team2: str
     toss_winner: str
     toss_decision: str # 'bat' or 'field'
-    # Add recent performance stats - these would typically be calculated based on historical data
-    # For a real-time API, you'd need a way to fetch/calculate these before prediction
+
     team1_win_rate_last_5: float = 0.5 # Example default
     team1_avg_margin_last_5: float = 0.0
     team2_win_rate_last_5: float = 0.5

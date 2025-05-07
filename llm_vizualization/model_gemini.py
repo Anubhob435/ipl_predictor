@@ -1,13 +1,19 @@
-from google import genai
-from google.genai import types
+import google.generativeai as genai
 import os
 from dotenv import load_dotenv
 
 # Load environment variables (create a .env file with your API key)
 load_dotenv()
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "GEMINI_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-client = genai.Client(api_key=GEMINI_API_KEY)
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY environment variable not set. Please add it to your .env file.")
+
+# Configure the client with the API key
+genai.configure(api_key=GEMINI_API_KEY)
+
+# Initialize the generative model
+generative_model = genai.GenerativeModel(model_name="gemini-2.0-flash")
 
 def analyze_match_prediction(match_data, prediction_result):
     """
@@ -62,10 +68,10 @@ def analyze_match_prediction(match_data, prediction_result):
     """
     
     try:
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
+        # Call generate_content on the model instance
+        response = generative_model.generate_content(
             contents=prompt,
-            config=types.GenerateContentConfig(
+            generation_config=genai.types.GenerationConfig(
                 max_output_tokens=800,
                 temperature=0.3
             )

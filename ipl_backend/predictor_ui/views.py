@@ -4,16 +4,14 @@ import json
 from .forms import PredictionForm
 
 def index(request):
-    prediction_result = None
+    prediction_result_dict = None # For direct template rendering
+    prediction_result_json = "null" # For JavaScript
     form = PredictionForm()
-    
+
     if request.method == 'POST':
         form = PredictionForm(request.POST)
         if form.is_valid():
-            # Extract form data
             form_data = form.cleaned_data
-            
-            # Prepare data for FastAPI request
             api_data = {
                 "venue": form_data['venue'],
                 "team1": form_data['team1'],
@@ -32,13 +30,12 @@ def index(request):
                 "team2_avg_economy_rate_last_5": form_data['team2_avg_economy_rate_last_5']
             }
             
-            # Make request to FastAPI - ensure it uses the correct port (8000)
             try:
                 response = requests.post(
                     'http://127.0.0.1:8000/predict',
                     json=api_data,
                     headers={"Content-Type": "application/json"},
-                    timeout=5  # Add timeout to prevent long waiting
+                    timeout=10
                 )
                 
                 if response.status_code == 200:
@@ -46,26 +43,31 @@ def index(request):
                     predicted_winner = form_data['team1'] if prediction_data["predicted_winner_team1"] == 1 else form_data['team2']
                     win_probability = prediction_data["prediction_probability_team1"] if prediction_data["predicted_winner_team1"] == 1 else 1 - prediction_data["prediction_probability_team1"]
                     
-                    prediction_result = {
+                    prediction_result_dict = {
                         'winner': predicted_winner,
                         'probability': round(win_probability * 100, 2),
                         'team1': form_data['team1'],
                         'team2': form_data['team2'],
-                        'raw_response': prediction_data  # Include raw response for debugging
+                        'raw_response': prediction_data,
+                        'venue': form_data['venue'] 
                     }
                 else:
-                    prediction_result = {
+                    prediction_result_dict = {
                         'error': f"API Error: {response.status_code}",
                         'details': response.text
                     }
             except requests.exceptions.RequestException as e:
-                prediction_result = {
+                prediction_result_dict = {
                     'error': "Connection Error",
                     'details': str(e),
                     'message': "Make sure the FastAPI server is running on port 8000"
                 }
-    
+            
+            if prediction_result_dict:
+                 prediction_result_json = json.dumps(prediction_result_dict)
+
     return render(request, 'predictor_ui/index.html', {
         'form': form,
-        'prediction_result': prediction_result
+        'prediction_result': prediction_result_dict, # Pass the dictionary for direct display
+        'prediction_result_json': prediction_result_json # Pass the JSON string for JS
     })

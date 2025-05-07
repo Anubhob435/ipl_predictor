@@ -260,14 +260,34 @@
             
             if (aiAnalysisBtn && aiAnalysisResult && aiAnalysisContent) {
                 aiAnalysisBtn.addEventListener('click', function() {
+                    console.log('AI Analysis button clicked.'); // New log
                     // Show loading indicator
                     analysisLoading.classList.remove('hidden');
                     
                     // Prepare data from the current prediction
-                    const predictionData = {% if prediction_result and not prediction_result.error %}JSON.parse('{{ prediction_result|escapejs }}'){% else %}null{% endif %};
+                    const predictionDataString = '{{ prediction_result_json|escapejs }}'; // Use the new JSON string variable
+                    console.log('Raw prediction_result_json string from Django:', predictionDataString); // Updated log
+                    let predictionData = null;
+                    try {
+                        if (predictionDataString && predictionDataString !== "null") {
+                            predictionData = JSON.parse(predictionDataString);
+                        }
+                    } catch (e) {
+                        console.error('Error parsing prediction_result_json:', e, 'String was:', predictionDataString); // Updated log
+                        aiAnalysisContent.innerHTML = '<p class="text-red-600">Error: Could not parse prediction data. Check console.</p>';
+                        aiAnalysisResult.classList.remove('hidden');
+                        analysisLoading.classList.add('hidden');
+                        return;
+                    }
                     
-                    if (!predictionData) {
-                        aiAnalysisContent.innerHTML = '<p class="text-red-600">Error: No prediction data available for analysis.</p>';
+                    console.log('Parsed predictionData:', predictionData); // New log
+
+                    if (!predictionData || predictionData.error) { // Check for internal error flags too
+                        console.log('No valid predictionData available for analysis or predictionData contains an error.'); // New log
+                        aiAnalysisContent.innerHTML = '<p class="text-red-600">Error: No valid prediction data available for analysis. Please make a successful prediction first.</p>';
+                        if (predictionData && predictionData.error) {
+                             aiAnalysisContent.innerHTML += `<p class="text-red-500 mt-1">Details: ${predictionData.details || ''}</p>`;
+                        }
                         aiAnalysisResult.classList.remove('hidden');
                         analysisLoading.classList.add('hidden');
                         return;
@@ -297,7 +317,11 @@
                         probability: predictionData.probability
                     };
                     
+                    console.log('Prepared matchData for /analyze:', matchData); // New log
+                    console.log('Prepared predictionResult for /analyze:', predictionResult); // New log
+                    
                     // Fetch AI analysis from FastAPI
+                    console.log('Fetching AI analysis from http://127.0.0.1:8000/analyze...'); // New log
                     fetch('http://127.0.0.1:8000/analyze', {
                         method: 'POST',
                         headers: {
@@ -315,6 +339,7 @@
                         return response.json();
                     })
                     .then(data => {
+                        console.log('Received AI analysis data:', data); // New log
                         // Format the analysis text for better display
                         // Replace newlines with line breaks and add proper HTML formatting
                         let formattedAnalysis = data.analysis
