@@ -52,7 +52,7 @@ The final stage focused on refining the user experience:
 - Data Science: Pandas, NumPy, Scikit-learn, XGBoost
 - Web APIs: FastAPI (REST endpoints), Django (frontend)
 - LLM Integration: Gemini LLM (local/cloud)
-- Dev Tools: Git, VS Code, Postman, DVC (optional for versioning)
+- Dev Tools: Git, VS Code, Postman
 
 📈 Outcome
 By combining machine learning, LLM reasoning, and interactive web development, this project offers a full-stack solution for IPL analytics—delivering not just predictions but explainable, data-backed insights for cricket fans and analysts alike.
