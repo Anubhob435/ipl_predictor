@@ -56,6 +56,24 @@ except Exception as e:
 # --- API Definition ---
 app = FastAPI(title="IPL Match Winner Predictor API")
 
+# Import the Gemini analysis function
+import sys
+import os
+sys.path.append(os.path.join(ROOT_DIR, 'llm_vizualization'))
+try:
+    from llm_vizualization.model_gemini import analyze_match_prediction
+except ImportError:
+    # Fallback if the import fails
+    try:
+        from model_gemini import analyze_match_prediction
+        print("Successfully imported analyze_match_prediction from model_gemini")
+    except ImportError:
+        print("Warning: Could not import analyze_match_prediction function. AI Analysis feature will not work.")
+        
+        # Define a dummy function as fallback
+        def analyze_match_prediction(match_data, prediction_result):
+            return "Error: Gemini analysis function could not be loaded. Please check your setup and ensure the API key is configured."
+
 # Define input data model using Pydantic
 # Match the features used in X_classifier during training
 class MatchInput(BaseModel):
@@ -81,6 +99,15 @@ class MatchInput(BaseModel):
 class PredictionOutput(BaseModel):
     predicted_winner_team1: int # 1 if team1 predicted to win, 0 otherwise
     prediction_probability_team1: float # Probability of team1 winning
+
+# Request model for AI Analysis
+class AIAnalysisRequest(BaseModel):
+    match_data: dict
+    prediction_result: dict
+
+# Response model for AI Analysis
+class AIAnalysisResponse(BaseModel):
+    analysis: str
 
 @app.post("/predict", response_model=PredictionOutput)
 async def predict_winner(match_input: MatchInput):
@@ -169,6 +196,22 @@ async def predict_winner(match_input: MatchInput):
         predicted_winner_team1=int(prediction),
         prediction_probability_team1=float(prob_team1_wins)
     )
+
+@app.post("/analyze", response_model=AIAnalysisResponse)
+async def analyze_match(analysis_request: AIAnalysisRequest):
+    """
+    Analyze match prediction using Gemini AI
+    """
+    try:
+        analysis = analyze_match_prediction(
+            analysis_request.match_data, 
+            analysis_request.prediction_result
+        )
+        
+        return AIAnalysisResponse(analysis=analysis)
+    except Exception as e:
+        print(f"Error during AI analysis: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error during analysis: {str(e)}")
 
 # --- Function to save expected columns (Run this from model_training.py) ---
 # def save_expected_columns(columns, path):

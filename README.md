@@ -8,37 +8,42 @@ An advanced AI-based system for predicting IPL match outcomes, final scores, key
 
 | Component        | Technology                         |
 |------------------|-------------------------------------|
-| ML Models        | Scikit-learn, XGBoost, PyTorch      |
-| Backend APIs     | FastAPI, Django                     |
-| LLM Integration  | Ollama (LLaMA2, Mistral, etc.)      |
-| Data Pipelines   | Pandas, NumPy, Scikit-learn Pipelines |
-| Visualization    | Matplotlib, Plotly, Django Admin    |
-| Live API Docs    | Swagger (FastAPI built-in)          |
-| Deployment (opt) | Docker, Gunicorn, Nginx             |
+| ML Models        | Scikit-learn, XGBoost, numpy              |
+| Backend APIs     | FastAPI, Django                    |
+| LLM Integration  | Gemini 2.0     |
+| Data Pipelines   | Pandas, NumPy, Joblib              |
+| Visualization    | Django Admin, matplotlib                      |
+| Live API Docs    | Swagger (FastAPI built-in)         |
+| Deployment       | Uvicorn, Docker                           |
 
 ---
 
 ## 📁 Project Structure
 
 ```
-ipl-predictor/
-├── backend-django/         # Django admin + visualization dashboard
-│   ├── predictor/
-│   └── ...
-├── backend-fastapi/        # FastAPI ML prediction APIs
-│   └── main.py
-├── ml-models/              # ML model training scripts & serialized models
-│   ├── train.py
-│   ├── model_pipeline.pkl
-│   └── ...
-├── ollama-llm/             # Scripts for prompt generation + LLM integration
-│   └── llm_explainer.py
+ipl_predictor/
 ├── data/                   # IPL datasets (historical match & player data)
-│   └── matches.csv
-├── notebooks/              # Exploratory Data Analysis & prototypes
-│   └── EDA.ipynb
-├── README.md
-└── requirements.txt
+│   ├── processed/          # Processed CSV files after feature engineering
+│   └── raw/                # Raw match and deliveries data
+├── ipl_backend/           # Django admin + visualization dashboard
+│   ├── predictor_ui/      # Django app for UI interface
+│   └── ...
+├── ml-models/              # Serialized ML models
+│   ├── expected_columns.joblib
+│   ├── ipl_predictor_rf_classifier_tuned.joblib
+│   └── ...
+├── notebooks/              # Exploratory Data Analysis & model training
+│   ├── data_exploration.ipynb
+│   └── model_training.ipynb
+├── ollama-llm/             # LLM integration
+│   └── models.py
+├── scripts/                # Data processing and model training scripts
+│   ├── data_cleaning.py
+│   ├── feature_engineering.py
+│   └── ...
+├── fast_api.py            # FastAPI server implementation
+├── run_servers.py         # Script to run both Django and FastAPI servers
+└── requirements.txt       # Project dependencies
 ```
 
 ---
@@ -47,23 +52,21 @@ ipl-predictor/
 
 ### 🧠 ML Predictions
 
-- Predict match winner
-- Predict final scores (Winner & Loser)
-- Predict key player stats: Runs, Wickets, Economy Rate
-- Track trends from last 3–5 matches
+- Predict match winner with probability score
+- Team performance metrics including win rates and averages
+- Feature importance for prediction explanation
+- Multiple model implementations (Random Forest, XGBoost)
 
 ### 💬 LLM Reasoning (Ollama)
 
-- Local LLM (LLaMA2/Mistral) for:
-  - Explaining predictions
-  - Highlighting key influencing factors
-  - Generating narrative summaries
+- Local LLM for explaining predictions in natural language
+- Analysis of match stats and historical performance
 
-### 📈 Real-Time Prediction System
+### 📊 Match Data Analysis
 
-- Accept live match data updates
-- Output point predictions and confidence intervals
-- Visual dashboards for trends
+- Team stats: Win rates, average runs, economy rates
+- Player performance metrics
+- Venue-specific analysis
 
 ---
 
@@ -76,28 +79,38 @@ git clone https://github.com/your-username/ipl-predictor.git
 cd ipl-predictor
 ```
 
-### 2. Install Python Requirements
+### 2. Create and Activate Virtual Environment
+
+```bash
+python -m venv env
+# On Windows
+env\Scripts\activate
+# On macOS/Linux
+source env/bin/activate
+```
+
+### 3. Install Python Requirements
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Start Django Backend
-
-```bash
-cd backend-django
-python manage.py migrate
-python manage.py runserver
-```
-
 ### 4. Start FastAPI Server
 
 ```bash
-cd ../backend-fastapi
-uvicorn main:app --reload
+python fast_api.py
 ```
 
-### 5. Run Ollama LLM (Locally)
+The API will be available at http://127.0.0.1:8000 with Swagger documentation at http://127.0.0.1:8000/docs
+
+### 5. Start Django Backend (Optional)
+
+```bash
+cd ipl_backend
+python manage.py runserver
+```
+
+### 6. Run Ollama LLM (Locally)
 
 Install [Ollama](https://ollama.com/) and run:
 
@@ -111,13 +124,9 @@ ollama run llama2
 
 ## 🔗 API Endpoints (FastAPI)
 
-| Method | Endpoint                | Description                      |
-|--------|-------------------------|----------------------------------|
-| GET    | `/`                     | Welcome Message                  |
-| POST   | `/predict_winner`       | Predict match winner             |
-| POST   | `/predict_scores`       | Predict winner/loser final score |
-| POST   | `/predict_player_stats` | Predict player performance       |
-| POST   | `/explain_prediction`   | Get reasoning from LLM           |
+| Method | Endpoint     | Description                      |
+|--------|-------------|----------------------------------|
+| POST   | `/predict`  | Predict match winner with probability |
 
 ---
 
@@ -125,70 +134,63 @@ ollama run llama2
 
 ```json
 {
-  "team1": "CSK",
-  "team2": "MI",
   "venue": "Wankhede Stadium",
-  "toss_winner": "CSK",
-  "bat_first": "CSK",
-  "recent_matches": [
-    {"team": "CSK", "runs": 180, "won": true},
-    {"team": "MI", "runs": 155, "won": false}
-  ],
-  "key_players": {
-    "CSK": ["Dhoni", "Jadeja"],
-    "MI": ["Rohit", "Bumrah"]
-  }
+  "team1": "Chennai Super Kings",
+  "team2": "Mumbai Indians",
+  "toss_winner": "Chennai Super Kings",
+  "toss_decision": "bat",
+  "team1_win_rate_last_5": 0.6,
+  "team1_avg_margin_last_5": 15.0,
+  "team2_win_rate_last_5": 0.4,
+  "team2_avg_margin_last_5": -10.0,
+  "team1_avg_runs_scored_last_5": 175.2,
+  "team1_avg_wickets_taken_last_5": 6.8,
+  "team1_avg_economy_rate_last_5": 7.8,
+  "team2_avg_runs_scored_last_5": 165.5,
+  "team2_avg_wickets_taken_last_5": 6.2,
+  "team2_avg_economy_rate_last_5": 8.2
 }
 ```
 
 ---
 
-## 🧪 ML Training
+## 🧠 Model Training Pipeline
 
-### 1. Prepare Datasets
+The project includes a comprehensive data processing and model training pipeline:
 
-Place your CSV files under the `/data` directory.
+1. **Data Processing** (`scripts/data_cleaning.py`, `scripts/feature_engineering.py`)
+   - Clean and merge raw match and delivery data
+   - Generate features for team, player, and venue performance
 
-### 2. Train the Ensemble Model
+2. **Model Training** (`scripts/model_training.py`, `scripts/hyper_tuning.py`)
+   - Train Random Forest and XGBoost classifiers
+   - Hyperparameter tuning for optimized performance
+   - Feature selection and importance analysis
+
+3. **Model Evaluation** (`notebooks/model_training.ipynb`)
+   - Performance metrics (accuracy, precision, recall, F1)
+   - Cross-validation results
+   - Feature importance visualization
+
+---
+
+## 🔄 Running Both Servers
+
+Use the `run_servers.py` script to start both Django and FastAPI servers simultaneously:
 
 ```bash
-cd ml-models
-python train.py
+python run_servers.py
 ```
-
-> Trained models are saved as `.pkl` files and loaded by FastAPI or Django.
 
 ---
 
-## 🧠 LLM Reasoning Logic (Ollama)
+## 📱 Web UI Access
 
-In `ollama-llm/llm_explainer.py`, we generate prompts like:
+Once the Django server is running, access the web UI at:
+- http://127.0.0.1:8000/
 
-```
-Based on recent match stats, CSK has won 3 out of 5 matches. How likely are they to win against MI at Wankhede?
-```
-
-> The LLM responds with natural language explanations based on statistical cues.
-
----
-
-## 📊 Dashboard (Django)
-
-Features include:
-
-- View recent predictions
-- Explore visual graphs for player trends
-- Admin interface to upload datasets and manage models
-
----
-
-## ⚙️ Model Retraining
-
-To retrain periodically:
-
-- Use a `cron` job or script (`ml-models/train.py`)
-- Add new match data to `/data/`
-- Automatically refresh models via CLI or API call
+The admin interface is available at:
+- http://127.0.0.1:8000/admin/
 
 ---
 
@@ -207,5 +209,4 @@ Contributions are welcome! Please open issues or submit pull requests for improv
 ## 👨‍💻 Author
 
 **ANUBHOB DEY**  
-AI Engineer & Backend Developer  
-[Portfolio](https://your-portfolio.com) • [LinkedIn](https://linkedin.com/in/your-profile) • [GitHub](https://github.com/your-username)
+AI Engineer & Backend Developer
