@@ -1,6 +1,6 @@
 # 🏏 IPL Match Outcome Predictor
 
-An advanced AI-based system for predicting IPL match outcomes, final scores, key player performance, and explaining predictions using a hybrid of machine learning and a local large language model (LLM) via Ollama.
+An advanced AI-based system for predicting IPL match outcomes, final scores, key player performance, and explaining predictions using a hybrid of machine learning and Gemini 2.0 AI.
 
 ---
 
@@ -35,8 +35,10 @@ ipl_predictor/
 ├── notebooks/              # Exploratory Data Analysis & model training
 │   ├── data_exploration.ipynb
 │   └── model_training.ipynb
-├── ollama-llm/             # LLM integration
-│   └── models.py
+├── llm_vizualization/      # Gemini AI integration
+│   ├── __init__.py
+│   ├── data_vizualization.py
+│   └── model_gemini.py
 ├── scripts/                # Data processing and model training scripts
 │   ├── data_cleaning.py
 │   ├── feature_engineering.py
@@ -57,10 +59,11 @@ ipl_predictor/
 - Feature importance for prediction explanation
 - Multiple model implementations (Random Forest, XGBoost)
 
-### 💬 LLM Reasoning (Ollama)
+### 💬 LLM Reasoning (Gemini 2.0)
 
-- Local LLM for explaining predictions in natural language
-- Analysis of match stats and historical performance
+- AI-powered analysis of predictions in natural language
+- Explanation of match statistics and historical performance
+- Insights on team strengths and match dynamics
 
 ### 📊 Match Data Analysis
 
@@ -95,7 +98,15 @@ source env/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Start FastAPI Server
+### 4. Set up Gemini API Key
+
+Create a `.env` file in the project root with your Gemini API key:
+
+```
+GEMINI_API_KEY=your_api_key_here
+```
+
+### 5. Start FastAPI Server
 
 ```bash
 python fast_api.py
@@ -103,22 +114,12 @@ python fast_api.py
 
 The API will be available at http://127.0.0.1:8000 with Swagger documentation at http://127.0.0.1:8000/docs
 
-### 5. Start Django Backend (Optional)
+### 6. Start Django Backend (Optional)
 
 ```bash
 cd ipl_backend
 python manage.py runserver
 ```
-
-### 6. Run Ollama LLM (Locally)
-
-Install [Ollama](https://ollama.com/) and run:
-
-```bash
-ollama run llama2
-```
-
-> Ensure your FastAPI or Django backend communicates with Ollama via HTTP (default: `http://localhost:11434`).
 
 ---
 

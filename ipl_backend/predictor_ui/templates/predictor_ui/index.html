@@ -1,142 +1,132 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IPL Match Predictor</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#1e40af',
-                        secondary: '#4f46e5',
-                        success: '#16a34a',
-                        danger: '#dc2626',
-                    }
-                }
-            }
-        }
-    </script>
-    <style type="text/tailwindcss">
-        @layer components {
-            .form-input {
-                @apply w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
-            }
-            .form-select {
-                @apply w-full px-4 py-2 text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
-            }
-            .form-label {
-                @apply block mb-2 text-sm font-medium text-gray-700;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <div class="bg-gradient-to-r from-blue-700 to-indigo-800 py-12 shadow-lg">
-        <div class="container mx-auto px-4">
-            <h1 class="text-4xl font-bold text-white text-center">IPL Match Predictor</h1>
-            <p class="text-xl text-white text-center mt-2 opacity-90">Enter match details to predict the winner</p>
+<body>
+    <!-- Header with Cricket-themed background -->
+    <div class="header">
+        <div class="container">
+            <h1>IPL Match Predictor</h1>
+            <p>Enter match details to predict the winner with AI-powered analysis</p>
         </div>
     </div>
 
-    <div class="container mx-auto px-4 py-8">
-        <div class="w-full">
+    <div class="container py-8">
+        <div class="main-content">
             <!-- Form Section -->
-            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="card">
                 <form method="post">
                     {% csrf_token %}
                     {% load form_filters %}
                     
                     <!-- Match Details -->
-                    <div class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200">Match Details</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div>
+                    <div class="form-section">
+                        <h2 class="section-title">Match Details</h2>
+                        <div class="form-grid form-grid-3">
+                            <div class="form-group">
                                 <label for="{{ form.venue.id_for_label }}" class="form-label">{{ form.venue.label }}</label>
-                                {{ form.venue|tailwind_class }}
+                                {{ form.venue }}
+                                <small class="form-text">Select the stadium where the match is played</small>
                             </div>
-                            <div>
+                            <div class="form-group">
                                 <label for="{{ form.team1.id_for_label }}" class="form-label">{{ form.team1.label }}</label>
-                                {{ form.team1|tailwind_class }}
+                                {{ form.team1 }}
+                                <small class="form-text">First competing team</small>
                             </div>
-                            <div>
+                            <div class="form-group">
                                 <label for="{{ form.team2.id_for_label }}" class="form-label">{{ form.team2.label }}</label>
-                                {{ form.team2|tailwind_class }}
+                                {{ form.team2 }}
+                                <small class="form-text">Second competing team</small>
                             </div>
-                            <div>
+                            <div class="form-group">
                                 <label for="{{ form.toss_winner.id_for_label }}" class="form-label">{{ form.toss_winner.label }}</label>
-                                {{ form.toss_winner|tailwind_class }}
+                                {{ form.toss_winner }}
+                                <small class="form-text">Team that won the toss</small>
                             </div>
-                            <div>
+                            <div class="form-group">
                                 <label for="{{ form.toss_decision.id_for_label }}" class="form-label">{{ form.toss_decision.label }}</label>
-                                {{ form.toss_decision|tailwind_class }}
+                                {{ form.toss_decision }}
+                                <small class="form-text">Decision after winning the toss</small>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Team 1 Stats -->
-                    <div class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Team 1 Stats</h2>
-                        <p class="text-gray-600 mb-4 text-sm">Enter performance stats from the last 5 matches</p>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div>
+                    <div class="form-section">
+                        <h2 class="section-title">Team 1 Stats</h2>
+                        <p class="form-text mb-3">Enter performance stats from the last 5 matches</p>
+                        <div class="form-grid form-grid-3">
+                            <div class="form-group">
                                 <label for="{{ form.team1_win_rate_last_5.id_for_label }}" class="form-label">{{ form.team1_win_rate_last_5.label }}</label>
-                                {{ form.team1_win_rate_last_5|tailwind_class }}
+                                {{ form.team1_win_rate_last_5 }}
+                                <small class="form-text">Value between 0 and 1 (e.g., 0.6 = 3 wins from 5 matches)</small>
                             </div>
-                            <div>
+                            <div class="form-group">
                                 <label for="{{ form.team1_avg_margin_last_5.id_for_label }}" class="form-label">{{ form.team1_avg_margin_last_5.label }}</label>
-                                {{ form.team1_avg_margin_last_5|tailwind_class }}
+                                {{ form.team1_avg_margin_last_5 }}
+                                <small class="form-text">Average victory margin in runs/wickets</small>
                             </div>
-                            <div>
+                            <div class="form-group">
                                 <label for="{{ form.team1_avg_runs_scored_last_5.id_for_label }}" class="form-label">{{ form.team1_avg_runs_scored_last_5.label }}</label>
-                                {{ form.team1_avg_runs_scored_last_5|tailwind_class }}
+                                {{ form.team1_avg_runs_scored_last_5 }}
+                                <small class="form-text">Average runs scored per match</small>
                             </div>
-                            <div>
+                            <div class="form-group">
                                 <label for="{{ form.team1_avg_wickets_taken_last_5.id_for_label }}" class="form-label">{{ form.team1_avg_wickets_taken_last_5.label }}</label>
-                                {{ form.team1_avg_wickets_taken_last_5|tailwind_class }}
+                                {{ form.team1_avg_wickets_taken_last_5 }}
+                                <small class="form-text">Average wickets taken per match</small>
                             </div>
-                            <div>
+                            <div class="form-group">
                                 <label for="{{ form.team1_avg_economy_rate_last_5.id_for_label }}" class="form-label">{{ form.team1_avg_economy_rate_last_5.label }}</label>
-                                {{ form.team1_avg_economy_rate_last_5|tailwind_class }}
+                                {{ form.team1_avg_economy_rate_last_5 }}
+                                <small class="form-text">Average economy rate of bowlers</small>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Team 2 Stats -->
-                    <div class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-2 pb-2 border-b border-gray-200">Team 2 Stats</h2>
-                        <p class="text-gray-600 mb-4 text-sm">Enter performance stats from the last 5 matches</p>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div>
+                    <div class="form-section">
+                        <h2 class="section-title">Team 2 Stats</h2>
+                        <p class="form-text mb-3">Enter performance stats from the last 5 matches</p>
+                        <div class="form-grid form-grid-3">
+                            <div class="form-group">
                                 <label for="{{ form.team2_win_rate_last_5.id_for_label }}" class="form-label">{{ form.team2_win_rate_last_5.label }}</label>
-                                {{ form.team2_win_rate_last_5|tailwind_class }}
+                                {{ form.team2_win_rate_last_5 }}
+                                <small class="form-text">Value between 0 and 1 (e.g., 0.6 = 3 wins from 5 matches)</small>
                             </div>
-                            <div>
+                            <div class="form-group">
                                 <label for="{{ form.team2_avg_margin_last_5.id_for_label }}" class="form-label">{{ form.team2_avg_margin_last_5.label }}</label>
-                                {{ form.team2_avg_margin_last_5|tailwind_class }}
+                                {{ form.team2_avg_margin_last_5 }}
+                                <small class="form-text">Average victory margin in runs/wickets</small>
                             </div>
-                            <div>
+                            <div class="form-group">
                                 <label for="{{ form.team2_avg_runs_scored_last_5.id_for_label }}" class="form-label">{{ form.team2_avg_runs_scored_last_5.label }}</label>
-                                {{ form.team2_avg_runs_scored_last_5|tailwind_class }}
+                                {{ form.team2_avg_runs_scored_last_5 }}
+                                <small class="form-text">Average runs scored per match</small>
                             </div>
-                            <div>
+                            <div class="form-group">
                                 <label for="{{ form.team2_avg_wickets_taken_last_5.id_for_label }}" class="form-label">{{ form.team2_avg_wickets_taken_last_5.label }}</label>
-                                {{ form.team2_avg_wickets_taken_last_5|tailwind_class }}
+                                {{ form.team2_avg_wickets_taken_last_5 }}
+                                <small class="form-text">Average wickets taken per match</small>
                             </div>
-                            <div>
+                            <div class="form-group">
                                 <label for="{{ form.team2_avg_economy_rate_last_5.id_for_label }}" class="form-label">{{ form.team2_avg_economy_rate_last_5.label }}</label>
-                                {{ form.team2_avg_economy_rate_last_5|tailwind_class }}
+                                {{ form.team2_avg_economy_rate_last_5 }}
+                                <small class="form-text">Average economy rate of bowlers</small>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Submit Button -->
-                    <div class="mt-8">
-                        <button type="submit" class="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-medium rounded-lg shadow-md hover:from-blue-700 hover:to-indigo-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all">
+                    <div class="mt-4 text-center">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <span class="cricket-ball"></span>
                             Predict Winner
                         </button>
                     </div>
@@ -145,45 +135,51 @@
             
             <!-- Prediction Result Section -->
             {% if prediction_result %}
-            <div class="bg-white rounded-xl shadow-md p-6">
-                <h2 class="text-2xl font-bold text-primary mb-4">Match Prediction</h2>
+            <div class="card result-section">
+                <h2 class="section-title">Match Prediction</h2>
                 
                 {% if prediction_result.error %}
-                    <p class="text-xl font-semibold text-danger">Error: {{ prediction_result.error }}</p>
-                    <p class="text-gray-700 mt-2">{{ prediction_result.details }}</p>
+                    <p class="error-text">Error: {{ prediction_result.error }}</p>
+                    <p class="error-details">{{ prediction_result.details }}</p>
                     {% if prediction_result.message %}
-                    <p class="text-gray-700">{{ prediction_result.message }}</p>
+                    <p class="error-details">{{ prediction_result.message }}</p>
                     {% endif %}
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mt-4">
-                        <p class="text-yellow-700">Please ensure the FastAPI service is running on port 8000.</p>
-                        <p class="text-yellow-700 mt-1">You can start it by running:</p>
-                        <code class="block bg-gray-100 p-2 rounded mt-2 text-sm">cd c:\Users\anubh\OneDrive\Desktop\ipl_predictor && python fast_api.py</code>
-                        <p class="text-yellow-700 mt-3">Or use the run_servers.py script to start both servers:</p>
-                        <code class="block bg-gray-100 p-2 rounded mt-2 text-sm">cd c:\Users\anubh\OneDrive\Desktop\ipl_predictor && python run_servers.py</code>
+                    <div class="alert alert-warning mt-4">
+                        <p>Please ensure the FastAPI service is running on port 8000.</p>
+                        <p class="mt-1">You can start it by running:</p>
+                        <code class="code-block">cd c:\Users\anubh\OneDrive\Desktop\ipl_predictor && python fast_api.py</code>
+                        <p class="mt-3">Or use the run_servers.py script to start both servers:</p>
+                        <code class="code-block">cd c:\Users\anubh\OneDrive\Desktop\ipl_predictor && python run_servers.py</code>
                     </div>
                 {% else %}
-                    <p class="text-2xl font-bold mb-2">
+                    <div class="text-center mb-4">
+                        <span class="team-badge">{{ prediction_result.team1 }}</span> vs
+                        <span class="team-badge">{{ prediction_result.team2 }}</span>
+                    </div>
+                    
+                    <p class="results-text text-center">
                         The predicted winner is <span class="text-success">{{ prediction_result.winner }}</span>
                     </p>
-                    <p class="text-lg text-gray-700 mb-4">Win probability: <span class="font-medium">{{ prediction_result.probability }}%</span></p>
+                    
+                    <p class="results-probability text-center">Win probability: <span class="font-bold">{{ prediction_result.probability }}%</span></p>
                     
                     <!-- Prediction Bar Chart -->
-                    <div class="w-full bg-gray-200 rounded-full h-6 mb-6">
+                    <div class="progress-container">
                         {% if prediction_result.winner == prediction_result.team1 %}
-                            <div class="flex rounded-full overflow-hidden h-full">
-                                <div class="bg-success text-xs flex items-center justify-center text-white h-full text-center p-1" style="width: {{ prediction_result.probability }}%">
+                            <div class="progress-bar">
+                                <div class="progress-segment progress-success" style="width: {{ prediction_result.probability }}%">
                                     {{ prediction_result.team1 }} ({{ prediction_result.probability }}%)
                                 </div>
-                                <div class="bg-danger text-xs flex items-center justify-center text-white h-full text-center p-1" style="width: {{ 100|add:'-'|add:prediction_result.probability }}%">
-                                    {{ prediction_result.team2 }} ({{ 100|add:'-'|add:prediction_result.probability }}%)
+                                <div class="progress-segment progress-danger" style="width: calc(100% - {{ prediction_result.probability }}%)">
+                                    {{ prediction_result.team2 }} ({{ 100|add:"-"|add:prediction_result.probability }}%)
                                 </div>
                             </div>
                         {% else %}
-                            <div class="flex rounded-full overflow-hidden h-full">
-                                <div class="bg-danger text-xs flex items-center justify-center text-white h-full text-center p-1" style="width: {{ 100|add:'-'|add:prediction_result.probability }}%">
-                                    {{ prediction_result.team1 }} ({{ 100|add:'-'|add:prediction_result.probability }}%)
+                            <div class="progress-bar">
+                                <div class="progress-segment progress-danger" style="width: calc(100% - {{ prediction_result.probability }}%)">
+                                    {{ prediction_result.team1 }} ({{ 100|add:"-"|add:prediction_result.probability }}%)
                                 </div>
-                                <div class="bg-success text-xs flex items-center justify-center text-white h-full text-center p-1" style="width: {{ prediction_result.probability }}%">
+                                <div class="progress-segment progress-success" style="width: {{ prediction_result.probability }}%">
                                     {{ prediction_result.team2 }} ({{ prediction_result.probability }}%)
                                 </div>
                             </div>
@@ -191,39 +187,38 @@
                     </div>
 
                     <!-- AI Analysis Button -->
-                    <div class="mt-6 mb-4">
-                        <button id="aiAnalysisBtn" class="px-5 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-lg shadow-md hover:from-indigo-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition-all flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                    <div class="analysis-section">
+                        <button id="aiAnalysisBtn" class="btn btn-secondary btn-lg flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-2" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 16v-4"></path>
+                                <path d="M12 8h.01"></path>
                             </svg>
-                            AI Analysis
+                            Get AI Match Analysis
                         </button>
-                        <div id="analysisLoading" class="hidden mt-3 flex items-center text-indigo-600">
-                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
+                        <div id="analysisLoading" class="hidden mt-3 flex items-center loading-text">
+                            <div class="spinner"></div>
                             Generating AI analysis...
                         </div>
                     </div>
                     
                     <!-- AI Analysis Result Container -->
-                    <div id="aiAnalysisResult" class="hidden mt-4 mb-6 p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-100 shadow-sm">
-                        <h3 class="text-xl font-bold text-indigo-800 mb-3">AI Match Analysis</h3>
-                        <div id="aiAnalysisContent" class="prose prose-indigo max-w-none">
+                    <div id="aiAnalysisResult" class="hidden analysis-result">
+                        <h3 class="analysis-title">AI Match Analysis</h3>
+                        <div id="aiAnalysisContent">
                             <!-- Content will be loaded here -->
                         </div>
                     </div>
                     
                     <!-- Debug Information (Collapsible) -->
-                    <div class="mt-6">
-                        <button id="debugBtn" class="text-sm px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
+                    <div class="debug-section">
+                        <button id="debugBtn" class="btn btn-secondary btn-sm">
                             Show Debug Info
                         </button>
                         <div id="debugInfo" class="hidden mt-3">
-                            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 font-mono text-sm">
-                                <h5 class="font-semibold text-gray-700 mb-2">Raw API Response:</h5>
-                                <pre class="whitespace-pre-wrap">{{ prediction_result.raw_response }}</pre>
+                            <div class="debug-info">
+                                <h5 class="debug-title">Raw API Response:</h5>
+                                <pre>{{ prediction_result.raw_response }}</pre>
                             </div>
                         </div>
                     </div>
@@ -258,38 +253,56 @@
             const aiAnalysisResult = document.getElementById('aiAnalysisResult');
             const aiAnalysisContent = document.getElementById('aiAnalysisContent');
             
+            // Add animations for form sections
+            const formSections = document.querySelectorAll('.form-section');
+            formSections.forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    section.style.transition = 'all 0.5s ease';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, 100 * (index + 1));
+            });
+            
             if (aiAnalysisBtn && aiAnalysisResult && aiAnalysisContent) {
                 aiAnalysisBtn.addEventListener('click', function() {
-                    console.log('AI Analysis button clicked.'); // New log
+                    console.log('AI Analysis button clicked.');
                     // Show loading indicator
                     analysisLoading.classList.remove('hidden');
+                    aiAnalysisBtn.disabled = true;
+                    aiAnalysisBtn.classList.add('opacity-50');
                     
                     // Prepare data from the current prediction
-                    const predictionDataString = '{{ prediction_result_json|escapejs }}'; // Use the new JSON string variable
-                    console.log('Raw prediction_result_json string from Django:', predictionDataString); // Updated log
+                    const predictionDataString = '{{ prediction_result_json|escapejs }}';
+                    console.log('Raw prediction_result_json string from Django:', predictionDataString);
                     let predictionData = null;
                     try {
                         if (predictionDataString && predictionDataString !== "null") {
                             predictionData = JSON.parse(predictionDataString);
                         }
                     } catch (e) {
-                        console.error('Error parsing prediction_result_json:', e, 'String was:', predictionDataString); // Updated log
-                        aiAnalysisContent.innerHTML = '<p class="text-red-600">Error: Could not parse prediction data. Check console.</p>';
+                        console.error('Error parsing prediction_result_json:', e, 'String was:', predictionDataString);
+                        aiAnalysisContent.innerHTML = '<div class="alert alert-danger"><p class="font-medium">Error: Could not parse prediction data.</p><p>Please check browser console for details.</p></div>';
                         aiAnalysisResult.classList.remove('hidden');
                         analysisLoading.classList.add('hidden');
+                        aiAnalysisBtn.disabled = false;
+                        aiAnalysisBtn.classList.remove('opacity-50');
                         return;
                     }
                     
-                    console.log('Parsed predictionData:', predictionData); // New log
+                    console.log('Parsed predictionData:', predictionData);
 
-                    if (!predictionData || predictionData.error) { // Check for internal error flags too
-                        console.log('No valid predictionData available for analysis or predictionData contains an error.'); // New log
-                        aiAnalysisContent.innerHTML = '<p class="text-red-600">Error: No valid prediction data available for analysis. Please make a successful prediction first.</p>';
+                    if (!predictionData || predictionData.error) {
+                        console.log('No valid predictionData available for analysis or predictionData contains an error.');
+                        aiAnalysisContent.innerHTML = '<div class="alert alert-danger"><p class="font-medium">Error: No valid prediction data available for analysis.</p><p>Please make a successful prediction first.</p></div>';
                         if (predictionData && predictionData.error) {
-                             aiAnalysisContent.innerHTML += `<p class="text-red-500 mt-1">Details: ${predictionData.details || ''}</p>`;
+                             aiAnalysisContent.innerHTML += `<p class="text-danger mt-1">Details: ${predictionData.details || ''}</p>`;
                         }
                         aiAnalysisResult.classList.remove('hidden');
                         analysisLoading.classList.add('hidden');
+                        aiAnalysisBtn.disabled = false;
+                        aiAnalysisBtn.classList.remove('opacity-50');
                         return;
                     }
                     
@@ -317,11 +330,11 @@
                         probability: predictionData.probability
                     };
                     
-                    console.log('Prepared matchData for /analyze:', matchData); // New log
-                    console.log('Prepared predictionResult for /analyze:', predictionResult); // New log
+                    console.log('Prepared matchData for /analyze:', matchData);
+                    console.log('Prepared predictionResult for /analyze:', predictionResult);
                     
                     // Fetch AI analysis from FastAPI
-                    console.log('Fetching AI analysis from http://127.0.0.1:8000/analyze...'); // New log
+                    console.log('Fetching AI analysis from http://127.0.0.1:8000/analyze...');
                     fetch('http://127.0.0.1:8000/analyze', {
                         method: 'POST',
                         headers: {
@@ -334,49 +347,84 @@
                     })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Network response was not ok');
+                            throw new Error(`Network response error (${response.status}): ${response.statusText}`);
                         }
                         return response.json();
                     })
                     .then(data => {
-                        console.log('Received AI analysis data:', data); // New log
+                        console.log('Received AI analysis data:', data);
                         // Format the analysis text for better display
-                        // Replace newlines with line breaks and add proper HTML formatting
                         let formattedAnalysis = data.analysis
                             .replace(/\n\n/g, '</p><p>') // Replace double newlines with paragraphs
                             .replace(/\n/g, '<br>') // Replace single newlines with line breaks
                             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text
-                            .replace(/# (.*?)(?:\n|$)/g, '<h4 class="text-lg font-bold text-indigo-700 mt-4 mb-2">$1</h4>') // Headings
-                            .replace(/## (.*?)(?:\n|$)/g, '<h5 class="text-md font-bold text-indigo-600 mt-3 mb-2">$1</h5>'); // Subheadings
+                            .replace(/# (.*?)(?:\n|$)/g, '<h4 class="font-bold mt-4 mb-2">$1</h4>') // Headings
+                            .replace(/## (.*?)(?:\n|$)/g, '<h5 class="font-bold mt-3 mb-2">$1</h5>'); // Subheadings
                             
                         formattedAnalysis = `<p>${formattedAnalysis}</p>`;
                         
-                        // Display the analysis
+                        // Display the analysis with animation
                         aiAnalysisContent.innerHTML = formattedAnalysis;
+                        aiAnalysisResult.style.opacity = '0';
                         aiAnalysisResult.classList.remove('hidden');
                         
-                        // Hide loading indicator
-                        analysisLoading.classList.add('hidden');
-                        
-                        // Change button text to show it's been analyzed
-                        aiAnalysisBtn.innerHTML = `
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            Analysis Complete
-                        `;
+                        setTimeout(() => {
+                            aiAnalysisResult.style.opacity = '1';
+                            // Hide loading indicator
+                            analysisLoading.classList.add('hidden');
+                            
+                            // Change button text to show it's been analyzed
+                            aiAnalysisBtn.innerHTML = `
+                                <svg xmlns="http://www.w3.org/2000/svg" class="mr-2" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                Analysis Complete
+                            `;
+                            aiAnalysisBtn.disabled = false;
+                            aiAnalysisBtn.classList.remove('opacity-50');
+                        }, 100);
                     })
                     .catch(error => {
                         console.error('Error fetching AI analysis:', error);
                         aiAnalysisContent.innerHTML = `
-                            <div class="bg-red-50 border-l-4 border-red-400 p-4">
-                                <p class="text-red-700 font-medium">Error fetching AI analysis</p>
-                                <p class="text-red-600">${error.message}</p>
-                                <p class="text-red-600 mt-2">Make sure the FastAPI server is running and properly configured with a Gemini API key.</p>
+                            <div class="alert alert-danger">
+                                <p class="font-medium">Error fetching AI analysis</p>
+                                <p>${error.message}</p>
+                                <p class="mt-2">Make sure the FastAPI server is running and properly configured with a Gemini API key.</p>
+                                <button id="retryAnalysisBtn" class="btn btn-secondary btn-sm mt-3">Retry</button>
                             </div>
                         `;
                         aiAnalysisResult.classList.remove('hidden');
                         analysisLoading.classList.add('hidden');
+                        aiAnalysisBtn.disabled = false;
+                        aiAnalysisBtn.classList.remove('opacity-50');
+                        
+                        // Add retry button functionality
+                        document.getElementById('retryAnalysisBtn').addEventListener('click', function() {
+                            aiAnalysisResult.classList.add('hidden');
+                            aiAnalysisBtn.click();
+                        });
+                    });
+                });
+            }
+            
+            // Form validation enhancements
+            const form = document.querySelector('form');
+            if (form) {
+                // Highlight fields on focus
+                const formInputs = form.querySelectorAll('input, select');
+                formInputs.forEach(input => {
+                    input.addEventListener('focus', function() {
+                        this.parentElement.classList.add('input-focused');
+                    });
+                    
+                    input.addEventListener('blur', function() {
+                        this.parentElement.classList.remove('input-focused');
+                        // Simple validation - check if field has value
+                        if (this.value) {
+                            this.classList.add('is-valid');
+                            this.classList.remove('is-invalid');
+                        }
                     });
                 });
             }
